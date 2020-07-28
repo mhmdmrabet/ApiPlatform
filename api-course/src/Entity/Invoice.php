@@ -17,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  *          "order": {"sentAt":"desc"}
  *     }
  * )
- * @ApiFilter(OrderFilter::class)
+ * @ApiFilter(OrderFilter::class , properties={"amount","sentAt"})
  */
 class Invoice
 {
@@ -44,7 +44,7 @@ class Invoice
     private $status;
 
     /**
-     * @ORM\ManyToOne(targetEntity=customer::class, inversedBy="invoices")
+     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="invoices")
      * @ORM\JoinColumn(nullable=false)
      */
     private $customer;
