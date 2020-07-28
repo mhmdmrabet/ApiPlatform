@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -11,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ApiResource(
  *     attributes={"order"={"price":"asc"}}
  * )
+ * @ApiFilter(SearchFilter::class , properties={"title":"partial" , "category.title":"partial"})
  */
 class Product
 {
