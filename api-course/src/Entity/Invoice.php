@@ -52,6 +52,7 @@ class Invoice
     /**
      * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="invoices")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups("invoices_read")
      */
     private $customer;
 
