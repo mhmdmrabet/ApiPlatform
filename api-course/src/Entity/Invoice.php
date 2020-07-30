@@ -17,6 +17,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "normalization_context"={"groups"={"invoices_subresource"}}
  *          }
  *     },
+ *     itemOperations={"GET","PUT","DELETE", "increment"={
+ *          "method"="POST",
+ *          "path"="/invoices/{id}/increment" ,
+ *          "controller"="App\Controller\InvoiceIncrementationController",
+ *          "openapi_context"={
+                "summary"="Incrémente une facture",
+ *              "description"="Incrément le chrono d'une facture donnée"
+ *              }
+ *          }
+ *     },
  *     attributes={
             "pagination_enabled"=true,
  *          "pagination_items_per_page"=5,
