@@ -60,6 +60,7 @@ class Invoice
      * @ORM\Column(type="datetime")
      * @Groups({"invoices_read","customers_read","invoices_subresource"})
      * @Assert\NotBlank(message="La date d'envoi doit être renseignée")
+     * @Assert\Type(type="\DateTime" , message="La date renseignée doit être au format YYYY-MM-DD")
      */
     private $sentAt;
 
@@ -119,7 +120,7 @@ class Invoice
         return $this->sentAt;
     }
 
-    public function setSentAt(\DateTimeInterface $sentAt): self
+    public function setSentAt($sentAt): self
     {
         $this->sentAt = $sentAt;
 
