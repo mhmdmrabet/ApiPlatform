@@ -7,12 +7,15 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ApiResource()
+ * @UniqueEntity("email" , message="Cet e-mail existe déjà")
  */
 class User implements UserInterface
 {
@@ -27,6 +30,8 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Groups({"customers_read", "invoices_read","invoices_subresource"})
+     * @Assert\NotBlank(message="L'email doit être renseigné")
+     * @Assert\Email(message="L'adresse mail doit être valide")
      */
     private $email;
 
@@ -38,23 +43,28 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="Le mot de passe est obligatoire")
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read", "invoices_read","invoices_subresource"})
+     * @Assert\NotBlank(message="Le prénom est obligatoire")
+     * @Assert\Length(min="2" , minMessage="Le prénom doit avoir plus de deux caractères" , max="100" , maxMessage="Le prénom ne doit pas avoir plus de 100 caractères")
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read", "invoices_read","invoices_subresource"})
+     *@Assert\NotBlank(message="Le nom est obligatoire")
+     *@Assert\Length(min="2" , minMessage="Le nom doit avoir plus de deux caractères" , max="100" , maxMessage="Le nom ne doit pas avoir plus de 100 caractères")
      */
     private $lastName;
 
     /**
-     * @ORM\OneToMany(targetEntity=customer::class, mappedBy="user")
+     * @ORM\OneToMany(targetEntity=Customer::class, mappedBy="user")
      */
     private $customers;
 
