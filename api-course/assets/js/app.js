@@ -11,15 +11,28 @@ import ReactDom from "react-dom" ;
 
 // any CSS you import will output into a single css file (app.css in this case)
 import '../css/app.css';
+import Navbar from "./components/Navbar";
+import HomePage from "./pages/HomePage";
 
 // Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
 // import $ from 'jquery';
 
 console.log('Hello Webpack Encore! Edit me in assets/js/app.js ! Mohamed Mrabet');
 
-const App= () => {
-    return <h1>Bonjour à tous !</h1> ;
-} ;
+
+
+const App = () => {
+    return (
+        <div>
+            <Navbar />
+
+            <div className="container pt-5">
+                <HomePage />
+            </div>
+        </div>
+    );
+};
+
 
 const rootElement = document.querySelector('#app') ;
 ReactDom.render(<App/>, rootElement) ;
