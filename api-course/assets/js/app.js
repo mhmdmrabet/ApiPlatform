@@ -13,6 +13,8 @@ import ReactDom from "react-dom" ;
 import '../css/app.css';
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
+import {HashRouter, Switch, Route} from "react-router-dom";
+import CustomersPage from "./pages/CustomersPage";
 
 // Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
 // import $ from 'jquery';
@@ -23,13 +25,20 @@ console.log('Hello Webpack Encore! Edit me in assets/js/app.js ! Mohamed Mrabet'
 
 const App = () => {
     return (
-        <div>
+        <HashRouter>
             <Navbar />
 
-            <div className="container pt-5">
-                <HomePage />
-            </div>
-        </div>
+            <main className="container pt-5">
+
+                <Switch>
+
+                    <Route path="/customers" component={CustomersPage} />
+                    <Route path="/" component={HomePage} />
+
+                </Switch>
+
+            </main>
+        </HashRouter>
     );
 };
 
