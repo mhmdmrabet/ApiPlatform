@@ -15,7 +15,20 @@ const CustomersPage = (props) => {
 
     const handleDelete = (id) => {
         console.log(id) ;
-        axios.delete("https://127.0.0.1:8000/api/customers/" + id).then(response => console.log(response))
+
+        //Copie du tableau des customers
+        const originalCustomers = [...customers] ;
+
+        //
+        setCustomers(customers.filter(customer => customer.id !== id)) ;
+        axios
+            .delete("https://127.0.0.1:8000/api/customedrs/" + id)
+            .then(response => console.log("ok"))
+            .catch(error => {
+                // Si la requête n'a pas fonctionné on ré affiche la copie du tableau des customers
+                setCustomers(originalCustomers);
+                console.log(error.response);
+            });
     }
 
     return (
