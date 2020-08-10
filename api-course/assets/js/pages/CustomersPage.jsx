@@ -1,6 +1,18 @@
-import React from 'react';
+import React , {useEffect , useState} from 'react';
+import axios from "axios" ;
 
 const CustomersPage = (props) => {
+
+    const [customers , setCustomers] = useState([]) ;
+
+    useEffect(() => {
+        axios
+            .get("https://127.0.0.1:8000/api/customers")
+            .then(response => response.data["hydra:member"])
+            .then(data => setCustomers(data))
+            .catch(error => console.log(error.response));
+    } , [])
+
     return (
         <div>
 
@@ -21,21 +33,24 @@ const CustomersPage = (props) => {
                 </thead>
 
                 <tbody>
-                    <tr>
-                        <td>19</td>
+                {customers.map(customer => (
+                    <tr key={customer.id}>
+                        <td>{customer.id}</td>
                         <td>
-                            <a href="#">Mohamed M'rabet</a>
+                            <a href="#">{customer.firstName} {customer.lastName}</a>
                         </td>
-                        <td>mohamed@sym.fr</td>
-                        <td>Mohamed Inc</td>
-                        <td className="text-center">4</td>
-                        <td className="text-center">2 487,00 €</td>
+                        <td>{customer.email}</td>
+                        <td>{customer.company}</td>
+                        <td className="text-center">{customer.invoices.length}</td>
+                        <td className="text-center">{customer.totalAmount.toLocaleString()} €</td>
                         <td>
                             <button className="btn btn-sm btn-danger">
                                 Supprimer
                             </button>
                         </td>
                     </tr>
+                ))}
+
                 </tbody>
 
             </table>
