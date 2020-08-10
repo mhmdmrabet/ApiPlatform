@@ -5,6 +5,8 @@ const CustomersPage = (props) => {
 
     const [customers , setCustomers] = useState([]) ;
 
+    const [currentPage , setCurrentPage] = useState(1) ;
+
     useEffect(() => {
         axios
             .get("https://127.0.0.1:8000/api/customers")
@@ -22,7 +24,7 @@ const CustomersPage = (props) => {
         //
         setCustomers(customers.filter(customer => customer.id !== id)) ;
         axios
-            .delete("https://127.0.0.1:8000/api/customedrs/" + id)
+            .delete("https://127.0.0.1:8000/api/customers/" + id)
             .then(response => console.log("ok"))
             .catch(error => {
                 // Si la requête n'a pas fonctionné on ré affiche la copie du tableau des customers
@@ -30,6 +32,26 @@ const CustomersPage = (props) => {
                 console.log(error.response);
             });
     }
+
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page) ;
+    }
+
+    const itemsPerPage = 10 ;
+    const pagesCount = Math.ceil(customers.length / itemsPerPage) ;
+
+    const pages = [];
+
+    for(let i =1 ; i <= pagesCount ; i++)
+    {
+        pages.push(i) ;
+    }
+
+    // D'où on part (start) et pendant combien (itemsPerPage)
+    const start = currentPage * itemsPerPage - itemsPerPage ;
+    //exemple:          3     *      10      -      10      =   20
+    const paginatedCustomers = customers.slice(start, start + itemsPerPage) ;
 
     return (
         <div>
@@ -51,7 +73,7 @@ const CustomersPage = (props) => {
                 </thead>
 
                 <tbody>
-                {customers.map(customer => (
+                {paginatedCustomers.map(customer => (
                     <tr key={customer.id}>
                         <td>{customer.id}</td>
                         <td>
@@ -77,8 +99,34 @@ const CustomersPage = (props) => {
 
             </table>
 
+
+            <div>
+                <ul className="pagination pagination-sm">
+                    <li className={"page-item" + (currentPage === 1 && " disabled")}>
+                        <button className="page-link" onClick={()=> handlePageChange(currentPage -1)}>
+                            &laquo;
+                        </button>
+                    </li>
+                    {pages.map( page =>
+                        <li key={page} className={"page-item" + (currentPage === page && " active")}>
+                            <button className="page-link" onClick={() => handlePageChange(page)}>
+                                {page}
+                            </button>
+                        </li>
+                    )}
+
+                    <li className={"page-item" + (currentPage === pagesCount && " disabled")}>
+                        <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>
+                            &raquo;
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
         </div>
     );
 };
+
+
 
 export default CustomersPage;
