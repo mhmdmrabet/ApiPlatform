@@ -11,7 +11,12 @@ const CustomersPage = (props) => {
             .then(response => response.data["hydra:member"])
             .then(data => setCustomers(data))
             .catch(error => console.log(error.response));
-    } , [])
+    } , []);
+
+    const handleDelete = (id) => {
+        console.log(id) ;
+        axios.delete("https://127.0.0.1:8000/api/customers/" + id).then(response => console.log(response))
+    }
 
     return (
         <div>
@@ -44,7 +49,11 @@ const CustomersPage = (props) => {
                         <td className="text-center">{customer.invoices.length}</td>
                         <td className="text-center">{customer.totalAmount.toLocaleString()} €</td>
                         <td>
-                            <button className="btn btn-sm btn-danger">
+                            <button
+                                onClick={() => handleDelete(customer.id)}
+                                disabled={customer.invoices.length > 0}
+                                className="btn btn-sm btn-danger"
+                            >
                                 Supprimer
                             </button>
                         </td>
