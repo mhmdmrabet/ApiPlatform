@@ -1,6 +1,6 @@
 import React , {useEffect , useState} from 'react';
-import axios from "axios" ;
 import Pagination from "../components/Pagination";
+import CustomersApi from "../services/customersAPI" ;
 
 const CustomersPage = (props) => {
 
@@ -10,44 +10,71 @@ const CustomersPage = (props) => {
 
     const [search ,setSearch] = useState("");
 
-    useEffect(() => {
-        axios
-            .get("https://127.0.0.1:8000/api/customers")
-            .then(response => response.data["hydra:member"])
-            .then(data => setCustomers(data))
-            .catch(error => console.log(error.response));
-    } , []);
+    /**
+     * Permet d'aller récupérer les customers
+     * @returns {Promise<void>}
+     */
+    const fetchCustomers = async () => {
+        try {
+            const data = await CustomersApi.findAll()
+            setCustomers(data);
+        } catch (e) {
+            console.log(e.response) ;
+        }
+    }
 
-    const handleDelete = (id) => {
-        console.log(id) ;
+    /**
+     * Au chargement du composant on va chercher les customers
+     */
+    useEffect(() => fetchCustomers(), []);
+
+    /**
+     * Gestion de la suppression d'un customer
+     * @param id
+     * @returns {Promise<void>}
+     */
+    const handleDelete = async (id) => {
 
         //Copie du tableau des customers
-        const originalCustomers = [...customers] ;
+        const originalCustomers = [...customers];
 
-        //
-        setCustomers(customers.filter(customer => customer.id !== id)) ;
-        axios
-            .delete("https://127.0.0.1:8000/api/customers/" + id)
-            .then(response => console.log("ok"))
-            .catch(error => {
-                // Si la requête n'a pas fonctionné on ré affiche la copie du tableau des customers
-                setCustomers(originalCustomers);
-                console.log(error.response);
-            });
+        setCustomers(customers.filter(customer => customer.id !== id));
+
+        try {
+
+            await CustomersApi.delete(id);
+
+        } catch (error) {
+
+            // Si la requête n'a pas fonctionné on ré affiche la copie du tableau des customers
+            setCustomers(originalCustomers);
+            console.log(error.response);
+
+        }
+
     }
 
 
-    const handlePageChange = (page) => {
-        setCurrentPage(page) ;
-    }
+    /**
+     * Gestion du changement de page
+     * @param page
+     */
+    const handlePageChange = (page) => setCurrentPage(page) ;
 
-    const handleSearch = event => {
-        const value = event.currentTarget.value ;
-        setSearch(value) ;
+    /**
+     * Gestion de la recherche d'un customer
+     * @param event
+     */
+    const handleSearch = ({currentTarget}) => {
+        setSearch(currentTarget.value) ;
     };
 
     const itemsPerPage = 10 ;
 
+    /**
+     * Filtrage des customers en fonction de la recherche
+     * @type {*[]}
+     */
     const filteredCustomers = customers.filter(c =>
         c.firstName.toLocaleLowerCase().includes(search.toLocaleLowerCase())
         ||
@@ -60,6 +87,10 @@ const CustomersPage = (props) => {
         )
     );
 
+    /**
+     * Pagination des données
+     * @type {*|*[]}
+     */
     const paginatedCustomers = filteredCustomers.length > itemsPerPage
         ? Pagination.getData(
                 filteredCustomers ,
