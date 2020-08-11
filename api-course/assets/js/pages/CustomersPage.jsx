@@ -8,6 +8,8 @@ const CustomersPage = (props) => {
 
     const [currentPage , setCurrentPage] = useState(1) ;
 
+    const [search ,setSearch] = useState("");
+
     useEffect(() => {
         axios
             .get("https://127.0.0.1:8000/api/customers")
@@ -39,14 +41,41 @@ const CustomersPage = (props) => {
         setCurrentPage(page) ;
     }
 
+    const handleSearch = event => {
+        const value = event.currentTarget.value ;
+        setSearch(value) ;
+    };
+
     const itemsPerPage = 10 ;
 
-    const paginatedCustomers = Pagination.getData(customers , currentPage , itemsPerPage) ;
+    const filteredCustomers = customers.filter(c =>
+        c.firstName.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+        ||
+        c.lastName.toLowerCase().includes(search.toLowerCase())
+        ||
+        (
+            c.company
+            &&
+            c.company.toLowerCase().includes(search.toLowerCase())
+        )
+    );
+
+    const paginatedCustomers = filteredCustomers.length > itemsPerPage
+        ? Pagination.getData(
+                filteredCustomers ,
+                currentPage ,
+                itemsPerPage
+            )
+        : filteredCustomers ;
 
     return (
         <div>
 
             <h1 className="text-center">Liste des clients</h1>
+
+            <div className="form-group">
+                <input type="text" onChange={handleSearch} value={search} className="form-control" placeholder="Rechercher ..." />
+            </div>
 
             <table className="table table-hover">
 
@@ -89,7 +118,14 @@ const CustomersPage = (props) => {
 
             </table>
 
-            <Pagination currentPage={currentPage} itemsPerPage={itemsPerPage} length={customers.length} onPageChanged={handlePageChange} />
+
+            {itemsPerPage <filteredCustomers.length &&
+            <Pagination
+                currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
+                length={filteredCustomers.length}
+                onPageChanged={handlePageChange}
+            />}
 
         </div>
     );

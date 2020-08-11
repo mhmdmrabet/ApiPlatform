@@ -33,7 +33,7 @@ const App = () => {
 
                 <Switch>
 
-                    <Route path="/customers" component={CustomersPageWithPagination} />
+                    <Route path="/customers" component={CustomersPage} />
                     <Route path="/" component={HomePage} />
 
                 </Switch>
