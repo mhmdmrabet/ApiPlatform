@@ -1,5 +1,6 @@
 import React , {useEffect , useState} from 'react';
 import axios from "axios" ;
+import Pagination from "../components/Pagination";
 
 const CustomersPage = (props) => {
 
@@ -39,19 +40,8 @@ const CustomersPage = (props) => {
     }
 
     const itemsPerPage = 10 ;
-    const pagesCount = Math.ceil(customers.length / itemsPerPage) ;
 
-    const pages = [];
-
-    for(let i =1 ; i <= pagesCount ; i++)
-    {
-        pages.push(i) ;
-    }
-
-    // D'où on part (start) et pendant combien (itemsPerPage)
-    const start = currentPage * itemsPerPage - itemsPerPage ;
-    //exemple:          3     *      10      -      10      =   20
-    const paginatedCustomers = customers.slice(start, start + itemsPerPage) ;
+    const paginatedCustomers = Pagination.getData(customers , currentPage , itemsPerPage) ;
 
     return (
         <div>
@@ -99,29 +89,7 @@ const CustomersPage = (props) => {
 
             </table>
 
-
-            <div>
-                <ul className="pagination pagination-sm">
-                    <li className={"page-item" + (currentPage === 1 && " disabled")}>
-                        <button className="page-link" onClick={()=> handlePageChange(currentPage -1)}>
-                            &laquo;
-                        </button>
-                    </li>
-                    {pages.map( page =>
-                        <li key={page} className={"page-item" + (currentPage === page && " active")}>
-                            <button className="page-link" onClick={() => handlePageChange(page)}>
-                                {page}
-                            </button>
-                        </li>
-                    )}
-
-                    <li className={"page-item" + (currentPage === pagesCount && " disabled")}>
-                        <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>
-                            &raquo;
-                        </button>
-                    </li>
-                </ul>
-            </div>
+            <Pagination currentPage={currentPage} itemsPerPage={itemsPerPage} length={customers.length} onPageChanged={handlePageChange} />
 
         </div>
     );
