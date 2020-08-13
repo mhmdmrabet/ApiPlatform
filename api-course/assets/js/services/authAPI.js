@@ -1,6 +1,13 @@
 import axios from 'axios' ;
 
 
+function logout()
+{
+    window.localStorage.removeItem("authToken");
+    delete axios.defaults.headers["Authorization"];
+
+}
+
 function authenticate(credentials) {
 
     return axios
@@ -13,11 +20,11 @@ function authenticate(credentials) {
             //On prévient Axios qu'on a header par défaut sur toutes les futures requete HTTP
             axios.defaults.headers["Authorization"] = "Bearer " + token ; 
 
-            return true ; 
         });
      
 }
 
 export default {
-    authenticate 
+    authenticate , 
+    logout
 };
