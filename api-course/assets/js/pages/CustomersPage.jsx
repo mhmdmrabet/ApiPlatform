@@ -26,7 +26,9 @@ const CustomersPage = (props) => {
     /**
      * Au chargement du composant on va chercher les customers
      */
-    useEffect(() => fetchCustomers(), []);
+    useEffect(() => {
+        fetchCustomers();
+    }, []);
 
     /**
      * Gestion de la suppression d'un customer
@@ -76,7 +78,7 @@ const CustomersPage = (props) => {
      * @type {*[]}
      */
     const filteredCustomers = customers.filter(c =>
-        c.firstName.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+        c.firstName.toLowerCase().includes(search.toLowerCase())
         ||
         c.lastName.toLowerCase().includes(search.toLowerCase())
         ||
@@ -105,7 +107,13 @@ const CustomersPage = (props) => {
             <h1 className="text-center">Liste des clients</h1>
 
             <div className="form-group">
-                <input type="text" onChange={handleSearch} value={search} className="form-control" placeholder="Rechercher ..." />
+                <input 
+                    type="text"
+                    onChange={handleSearch}
+                    value={search}
+                    className="form-control"
+                    placeholder="Rechercher ..."
+                />
             </div>
 
             <table className="table table-hover">

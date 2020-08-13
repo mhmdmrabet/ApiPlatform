@@ -26,7 +26,7 @@ const Navbar = (props) => {
                             </a>
                         </li>
                         <li className="nav-item">
-                            <a href="" className="btn btn-secondary">
+                            <a href="" className="btn btn-secondary mr-2">
                                 Connexion
                             </a>
                         </li>
