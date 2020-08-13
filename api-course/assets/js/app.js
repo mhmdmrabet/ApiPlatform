@@ -17,6 +17,7 @@ import {HashRouter, Switch, Route} from "react-router-dom";
 import CustomersPage from "./pages/CustomersPage";
 import CustomersPageWithPagination from "./pages/CustomersPageWithPagination";
 import InvoicesPage from "./pages/InvoicesPage";
+import LoginPage from "./pages/LoginPage";
 
 // Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
 // import $ from 'jquery';
@@ -36,6 +37,7 @@ const App = () => {
 
                     <Route path="/customers" component={CustomersPage} />
                     <Route path="/invoices" component={InvoicesPage} />
+                    <Route path="/login" component={LoginPage} />
                     <Route path="/" component={HomePage} />
 
                 </Switch>
