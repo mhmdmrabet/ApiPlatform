@@ -1,5 +1,5 @@
 import React, { useState } from "react" ;
-import axios from "axios" ;
+import AuthAPI from "../services/authAPI";
 
 const LoginPage = (props) => {
 
@@ -10,34 +10,31 @@ const LoginPage = (props) => {
 
     const [error , setError] = useState("");
 
-    const handleChange = (event) => {
-        const value = event.currentTarget.value ;
-        const name = event.currentTarget.name ;
+    /**
+     * Gestion des champs 
+     * @param {*} param0 
+     */
+    const handleChange = ({currentTarget}) => {
+        
+        const {value,name} = currentTarget ; 
 
         setCredentials({...credentials, [name]: value});
     }
 
+    /**
+     * Gestion du submit
+     * @param {*} event 
+     */
     const handleSubmit = async event => {
         event.preventDefault();
 
         try {
-            const token = await axios
-                .post("https://127.0.0.1:8000/api/login_check", credentials)
-                .then(response => response.data.token);
+            await AuthAPI.authenticate(credentials);
             setError("");
-
-            //Stocker le token dans mon localStorage
-            window.localStorage.setItem("authToken" , token);
-
-            //On prévient Axios qu'on a header par défaut sur toutes les futures requete HTTP
-            axios.defaults.headers["Authorization"] = "Bearer " + token ; 
-
-        
         } catch (error) {
           setError("Les informations ne correspondent pas");
         }
 
-        console.log(credentials);
     }
 
     return ( 
