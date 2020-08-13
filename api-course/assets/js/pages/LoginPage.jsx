@@ -1,4 +1,5 @@
 import React, { useState } from "react" ;
+import axios from "axios" ;
 
 const LoginPage = (props) => {
 
@@ -7,6 +8,8 @@ const LoginPage = (props) => {
         password: ""
     });
 
+    const [error , setError] = useState("");
+
     const handleChange = (event) => {
         const value = event.currentTarget.value ;
         const name = event.currentTarget.name ;
@@ -14,8 +17,25 @@ const LoginPage = (props) => {
         setCredentials({...credentials, [name]: value});
     }
 
-    const handleSubmit = event => {
+    const handleSubmit = async event => {
         event.preventDefault();
+
+        try {
+            const token = await axios
+                .post("https://127.0.0.1:8000/api/login_check", credentials)
+                .then(response => response.data.token);
+            setError("");
+
+            //Stocker le token dans mon localStorage
+            window.localStorage.setItem("authToken" , token);
+
+            //On prévient Axios qu'on a header par défaut sur toutes les futures requete HTTP
+            axios.defaults.headers["Authorization"] = "Bearer " + token ; 
+
+        
+        } catch (error) {
+          setError("Les informations ne correspondent pas");
+        }
 
         console.log(credentials);
     }
@@ -37,8 +57,11 @@ const LoginPage = (props) => {
                         name="username" 
                         type="email" 
                         id="username"
-                        className="form-control" 
+                        className={"form-control" + (error && " is-invalid")} 
                     />
+                    {error && <p className="invalid-feedback">
+                        {error}
+                    </p>}
                 </div>
 
                 <div className="form-group">
