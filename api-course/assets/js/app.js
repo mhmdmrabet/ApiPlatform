@@ -13,7 +13,7 @@ import ReactDom from 'react-dom';
 import '../css/app.css';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
-import { HashRouter, Switch, Route } from 'react-router-dom';
+import { HashRouter, Switch, Route, withRouter } from 'react-router-dom';
 import CustomersPage from './pages/CustomersPage';
 import CustomersPageWithPagination from './pages/CustomersPageWithPagination';
 import InvoicesPage from './pages/InvoicesPage';
@@ -31,11 +31,16 @@ const App = () => {
 		authAPI.isAuthenticated()
 	);
 
+	const NavbarWithRouter = withRouter(Navbar);
+
 	console.log(isAuthenticated);
 
 	return (
 		<HashRouter>
-			<Navbar isAuthenticated={isAuthenticated} onLogout={setIsAuthenticated} />
+			<NavbarWithRouter
+				isAuthenticated={isAuthenticated}
+				onLogout={setIsAuthenticated}
+			/>
 
 			<main className="container pt-5">
 				<Switch>
@@ -43,7 +48,9 @@ const App = () => {
 					<Route path="/invoices" component={InvoicesPage} />
 					<Route
 						path="/login"
-						render={(props) => <LoginPage onLogin={setIsAuthenticated} />}
+						render={(props) => (
+							<LoginPage onLogin={setIsAuthenticated} {...props} />
+						)}
 					/>
 					<Route path="/" component={HomePage} />
 				</Switch>
