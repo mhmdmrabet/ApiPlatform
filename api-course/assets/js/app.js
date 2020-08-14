@@ -5,7 +5,7 @@
  * (and its CSS file) in your base layout (base.html.twig).
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import ReactDom from 'react-dom';
 
@@ -26,22 +26,28 @@ import AuthAPI from './services/authAPI';
 AuthAPI.setup();
 
 const App = () => {
+	const [isAuthenticated, setIsAuthenticated] = useState(true);
+
+	console.log(isAuthenticated);
+
 	return (
 		<HashRouter>
-			<Navbar />
+			<Navbar isAuthenticated={isAuthenticated} onLogout={setIsAuthenticated} />
 
 			<main className="container pt-5">
 				<Switch>
 					<Route path="/customers" component={CustomersPage} />
 					<Route path="/invoices" component={InvoicesPage} />
-					<Route path="/login" component={LoginPage} />
+					<Route
+						path="/login"
+						render={(props) => <LoginPage onLogin={setIsAuthenticated} />}
+					/>
 					<Route path="/" component={HomePage} />
 				</Switch>
 			</main>
 		</HashRouter>
 	);
 };
-
 
 const rootElement = document.querySelector('#app');
 ReactDom.render(<App />, rootElement);
