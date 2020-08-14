@@ -19,6 +19,7 @@ import CustomersPageWithPagination from './pages/CustomersPageWithPagination';
 import InvoicesPage from './pages/InvoicesPage';
 import LoginPage from './pages/LoginPage';
 import AuthAPI from './services/authAPI';
+import authAPI from './services/authAPI';
 
 // Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
 // import $ from 'jquery';
@@ -26,7 +27,9 @@ import AuthAPI from './services/authAPI';
 AuthAPI.setup();
 
 const App = () => {
-	const [isAuthenticated, setIsAuthenticated] = useState(true);
+	const [isAuthenticated, setIsAuthenticated] = useState(
+		authAPI.isAuthenticated()
+	);
 
 	console.log(isAuthenticated);
 
