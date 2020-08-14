@@ -19,6 +19,7 @@ class InvoiceRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Invoice::class);
     }
+    
 
     public function findNextChrono(User $user)
     {
@@ -33,6 +34,8 @@ class InvoiceRepository extends ServiceEntityRepository
                     ->getSingleScalarResult() + 1;
 
     }
+
+
 
     // /**
     //  * @return Invoice[] Returns an array of Invoice objects

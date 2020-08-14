@@ -40,6 +40,7 @@ class Invoice
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      * @Groups({"invoices_read","customers_read","invoices_subresource"})
+     *
      */
     private $id;
 

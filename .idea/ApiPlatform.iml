@@ -48,6 +48,7 @@
       <excludeFolder url="file://$MODULE_DIR$/api-course/vendor/psr/link" />
       <excludeFolder url="file://$MODULE_DIR$/api-course/vendor/psr/log" />
       <excludeFolder url="file://$MODULE_DIR$/api-course/vendor/sensio/framework-extra-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/api-course/vendor/symfony/apache-pack" />
       <excludeFolder url="file://$MODULE_DIR$/api-course/vendor/symfony/asset" />
       <excludeFolder url="file://$MODULE_DIR$/api-course/vendor/symfony/browser-kit" />
       <excludeFolder url="file://$MODULE_DIR$/api-course/vendor/symfony/cache" />
