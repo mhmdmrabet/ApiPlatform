@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Field from '../components/forms/Field';
 import { Link } from 'react-router-dom';
-import Axios from 'axios';
 import customersAPI from '../services/customersAPI';
 
-const CustomerPage = (props) => {
-	const { id = 'new' } = props.match.params;
+const CustomerPage = ({ match, history }) => {
+	const { id = 'new' } = match.params;
 
 	const [customer, setCustomer] = useState({
 		firstName: '',
@@ -23,18 +22,26 @@ const CustomerPage = (props) => {
 
 	const [editing, setEditing] = useState(false);
 
+    /**
+     * Récupération du customer en fonction de l'id
+     * @param {*} id 
+     */
 	const fetchCustomer = async (id) => {
 		try {
-			const data = await Axios.get(
-				'https://127.0.0.1:8000/api/customers/' + id
-			).then((response) => response.data);
-			const { firstName, lastName, email, company } = data;
+			const { firstName, lastName, email, company } = await customersAPI.find(
+				id
+			);
 			setCustomer({ firstName, lastName, email, company });
 		} catch (error) {
 			console.log(error.response);
+			//TODO : Notification de l'erreur
+			history.replace('/customers');
 		}
 	};
 
+    /**
+     * Chargement du customer afin de le modifier 
+     */
 	useEffect(() => {
 		if (id !== 'new') {
 			setEditing(true);
@@ -42,34 +49,36 @@ const CustomerPage = (props) => {
 		}
 	}, [id]);
 
+    /**
+     * Gestion des changements des inputs dans le form
+     * @param {*} param0 
+     */
 	const handleChange = ({ currentTarget }) => {
 		const { name, value } = currentTarget;
 		setCustomer({ ...customer, [name]: value });
 	};
 
+    /**
+     * Gestion de la soumission du form
+     * @param {*} event 
+     */
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
 		try {
 			if (editing) {
-				const response = await Axios.put(
-					'https://127.0.0.1:8000/api/customers/' + id,
-					customer
-				);
-				console.log(response.data);
+				await customersAPI.update(id, customer);
 			} else {
-				const response = await Axios.post(
-					'https://127.0.0.1:8000/api/customers',
-					customer
-				);
+				await customersAPI.create(customer);
 			}
 			setErrors({});
-			props.history.replace('/customers');
-		} catch (error) {
-			if (error.response.data.violations) {
+			history.replace('/customers');
+		} catch ({ response }) {
+			const { violations } = response.data;
+			if (violations) {
 				const apiErrors = {};
-				error.response.data.violations.forEach((violation) => {
-					apiErrors[violation.propertyPath] = violation.message;
+				violations.forEach(({ propertyPath, message }) => {
+					apiErrors[propertyPath] = message;
 				});
 
 				setErrors(apiErrors);
