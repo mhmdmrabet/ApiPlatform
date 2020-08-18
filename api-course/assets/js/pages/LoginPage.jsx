@@ -3,7 +3,7 @@ import AuthAPI from '../services/authAPI';
 import AuthContext from '../contexts/AuthContext';
 
 const LoginPage = ({ history }) => {
-	const setIsAuthenticated = useContext(AuthContext);
+	const {setIsAuthenticated} = useContext(AuthContext);
 	const [credentials, setCredentials] = useState({
 		username: '',
 		password: ''

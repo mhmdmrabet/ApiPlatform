@@ -34,7 +34,7 @@ import AuthContext from './contexts/AuthContext';
 AuthAPI.setup();
 
 const PrivateRoute = ({ path, component }) => {
-	const isAuthenticated = useContext(AuthContext);
+	const {isAuthenticated} = useContext(AuthContext);
 	return isAuthenticated ? (
 		<Route path={path} component={component} />
 	) : (
