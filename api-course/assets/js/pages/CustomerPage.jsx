@@ -64,6 +64,7 @@ const CustomerPage = (props) => {
 				);
 			}
 			setErrors({});
+			props.history.replace('/customers');
 		} catch (error) {
 			if (error.response.data.violations) {
 				const apiErrors = {};
