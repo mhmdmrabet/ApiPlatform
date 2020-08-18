@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Field from '../components/forms/Field';
 import { Link } from 'react-router-dom';
 import Axios from 'axios';
+import customersAPI from '../services/customersAPI';
 
 const CustomerPage = (props) => {
+	const { id = 'new' } = props.match.params;
+
 	const [customer, setCustomer] = useState({
 		firstName: '',
 		lastName: '',
@@ -18,6 +21,27 @@ const CustomerPage = (props) => {
 		company: ''
 	});
 
+	const [editing, setEditing] = useState(false);
+
+	const fetchCustomer = async (id) => {
+		try {
+			const data = await Axios.get(
+				'https://127.0.0.1:8000/api/customers/' + id
+			).then((response) => response.data);
+			const { firstName, lastName, email, company } = data;
+			setCustomer({ firstName, lastName, email, company });
+		} catch (error) {
+			console.log(error.response);
+		}
+	};
+
+	useEffect(() => {
+		if (id !== 'new') {
+			setEditing(true);
+			fetchCustomer(id);
+		}
+	}, [id]);
+
 	const handleChange = ({ currentTarget }) => {
 		const { name, value } = currentTarget;
 		setCustomer({ ...customer, [name]: value });
@@ -27,10 +51,18 @@ const CustomerPage = (props) => {
 		event.preventDefault();
 
 		try {
-			const response = await Axios.post(
-				'https://127.0.0.1:8000/api/customers',
-				customer
-			);
+			if (editing) {
+				const response = await Axios.put(
+					'https://127.0.0.1:8000/api/customers/' + id,
+					customer
+				);
+				console.log(response.data);
+			} else {
+				const response = await Axios.post(
+					'https://127.0.0.1:8000/api/customers',
+					customer
+				);
+			}
 			setErrors({});
 		} catch (error) {
 			if (error.response.data.violations) {
@@ -46,7 +78,9 @@ const CustomerPage = (props) => {
 
 	return (
 		<>
-			<h1>Création d'un client</h1>
+			{(!editing && <h1>Création d'un client</h1>) || (
+				<h1>Modification du client</h1>
+			)}
 
 			<form onSubmit={handleSubmit}>
 				<Field
