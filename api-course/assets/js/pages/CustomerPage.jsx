@@ -5,7 +5,7 @@ import Axios from 'axios';
 
 const CustomerPage = (props) => {
 	const [customer, setCustomer] = useState({
-		firstName: 'Mohamed',
+		firstName: '',
 		lastName: '',
 		email: '',
 		company: ''
@@ -31,9 +31,16 @@ const CustomerPage = (props) => {
 				'https://127.0.0.1:8000/api/customers',
 				customer
 			);
-			console.log(response.data);
+			setErrors({});
 		} catch (error) {
-			console.log(error.response);
+			if (error.response.data.violations) {
+				const apiErrors = {};
+				error.response.data.violations.forEach((violation) => {
+					apiErrors[violation.propertyPath] = violation.message;
+				});
+
+				setErrors(apiErrors);
+			}
 		}
 	};
 
