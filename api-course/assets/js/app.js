@@ -5,42 +5,32 @@
  * (and its CSS file) in your base layout (base.html.twig).
  */
 
-import React, { useState, useContext } from 'react';
-
+import React, { useState } from 'react';
 import ReactDom from 'react-dom';
+import {
+	HashRouter,
 
+	Route, Switch,
+
+	withRouter
+} from 'react-router-dom';
 // any CSS you import will output into a single css file (app.css in this case)
 import '../css/app.css';
 import Navbar from './components/Navbar';
-import HomePage from './pages/HomePage';
-import {
-	HashRouter,
-	Switch,
-	Route,
-	withRouter,
-	Redirect
-} from 'react-router-dom';
+import PrivateRoute from './components/PrivateRoute';
+import AuthContext from './contexts/AuthContext';
 import CustomersPage from './pages/CustomersPage';
-import CustomersPageWithPagination from './pages/CustomersPageWithPagination';
+import HomePage from './pages/HomePage';
 import InvoicesPage from './pages/InvoicesPage';
 import LoginPage from './pages/LoginPage';
-import AuthAPI from './services/authAPI';
-import authAPI from './services/authAPI';
-import AuthContext from './contexts/AuthContext';
+import { default as AuthAPI, default as authAPI } from './services/authAPI';
+
+
 
 // Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
 // import $ from 'jquery';
 
 AuthAPI.setup();
-
-const PrivateRoute = ({ path, component }) => {
-	const {isAuthenticated} = useContext(AuthContext);
-	return isAuthenticated ? (
-		<Route path={path} component={component} />
-	) : (
-		<Redirect to="/login" />
-	);
-};
 
 const App = () => {
 	const [isAuthenticated, setIsAuthenticated] = useState(
@@ -49,13 +39,13 @@ const App = () => {
 
 	const NavbarWithRouter = withRouter(Navbar);
 
-	const contextValue = {
-		isAuthenticated,
-		setIsAuthenticated
-	};
-
 	return (
-		<AuthContext.Provider value={contextValue}>
+		<AuthContext.Provider
+			value={{
+				isAuthenticated,
+				setIsAuthenticated
+			}}
+		>
 			<HashRouter>
 				<NavbarWithRouter />
 
