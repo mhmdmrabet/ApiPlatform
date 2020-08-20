@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Pagination from '../components/Pagination';
 import CustomersApi from '../services/customersAPI';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const CustomersPage = (props) => {
 	const [customers, setCustomers] = useState([]);
@@ -19,7 +20,7 @@ const CustomersPage = (props) => {
 			const data = await CustomersApi.findAll();
 			setCustomers(data);
 		} catch (e) {
-			console.log(e.response);
+			toast.error('Impossible de charger les clients');
 		}
 	};
 
@@ -43,10 +44,11 @@ const CustomersPage = (props) => {
 
 		try {
 			await CustomersApi.delete(id);
+			toast.success('Le client à bien été supprimée');
 		} catch (error) {
 			// Si la requête n'a pas fonctionné on ré affiche la copie du tableau des customers
 			setCustomers(originalCustomers);
-			console.log(error.response);
+			toast.error('La suppresion a échouée');
 		}
 	};
 

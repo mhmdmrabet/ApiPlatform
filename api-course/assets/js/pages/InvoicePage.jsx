@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Field from '../components/forms/Field';
 import Select from '../components/forms/Select';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import InvoiceAPI from '../services/invoicesApi';
 import CustomersApi from '../services/customersAPI';
+import { toast } from 'react-toastify';
 
 const InvoicePage = ({ history, match }) => {
 	const { id = 'new' } = match.params;
@@ -24,7 +24,7 @@ const InvoicePage = ({ history, match }) => {
 	});
 
 	/**
-	 * Récupération des clients 
+	 * Récupération des clients
 	 */
 	const fetchCustomers = async () => {
 		try {
@@ -33,22 +33,21 @@ const InvoicePage = ({ history, match }) => {
 
 			if (!invoice.customer) setInvoice({ ...invoice, customer: data[0].id });
 		} catch (error) {
-			//TODO flash notification error
+			toast.error('Impossible de charger les clients');
 			history.replace('/invoices');
 		}
 	};
 
 	/**
 	 * Récurépation d'une facture
-	 * @param {*} id 
+	 * @param {*} id
 	 */
 	const fetchInvoice = async (id) => {
 		try {
 			const { amount, status, customer } = await InvoiceAPI.find(id);
-
 			setInvoice({ amount, status, customer: customer.id });
 		} catch (error) {
-			//TODO flash notification error
+			toast.error('Impossible de charger la facture');
 			history.replace('/invoices');
 		}
 	};
@@ -81,7 +80,7 @@ const InvoicePage = ({ history, match }) => {
 
 	/**
 	 * Gestion soumission formulaire
-	 * @param {*} event 
+	 * @param {*} event
 	 */
 	const handleSubmit = async (event) => {
 		event.preventDefault();
@@ -89,12 +88,12 @@ const InvoicePage = ({ history, match }) => {
 		try {
 			if (editing) {
 				await InvoiceAPI.update(id, invoice);
-				//TODO Flash notification success
+				toast.success('La facture à bien été mdofiée');
 			} else {
 				await InvoiceAPI.create(invoice);
+				toast.success('La facture à bien été crée');
 			}
 
-			// TODO : flash Notification succcess
 			history.replace('/invoices');
 		} catch ({ response }) {
 			const { violations } = response.data;
@@ -105,6 +104,7 @@ const InvoicePage = ({ history, match }) => {
 				});
 
 				setErrors(apiErrors);
+				toast.error('Il y a des erreurs dans le formulaire');
 			}
 		}
 	};
