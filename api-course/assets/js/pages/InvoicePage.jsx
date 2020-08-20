@@ -3,7 +3,7 @@ import Field from '../components/forms/Field';
 import Select from '../components/forms/Select';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-
+import InvoiceAPI from '../services/invoicesApi';
 import CustomersApi from '../services/customersAPI';
 
 const InvoicePage = ({ history, match }) => {
@@ -23,6 +23,9 @@ const InvoicePage = ({ history, match }) => {
 		status: ''
 	});
 
+	/**
+	 * Récupération des clients 
+	 */
 	const fetchCustomers = async () => {
 		try {
 			const data = await CustomersApi.findAll();
@@ -30,27 +33,36 @@ const InvoicePage = ({ history, match }) => {
 
 			if (!invoice.customer) setInvoice({ ...invoice, customer: data[0].id });
 		} catch (error) {
-			console.log(error.response);
+			//TODO flash notification error
+			history.replace('/invoices');
 		}
 	};
 
+	/**
+	 * Récurépation d'une facture
+	 * @param {*} id 
+	 */
 	const fetchInvoice = async (id) => {
 		try {
-			const data = await axios
-				.get('https://127.0.0.1:8000/api/invoices/' + id)
-				.then((response) => response.data);
-			const { amount, status, customer } = data;
+			const { amount, status, customer } = await InvoiceAPI.find(id);
 
 			setInvoice({ amount, status, customer: customer.id });
 		} catch (error) {
-			console.log(error.response);
+			//TODO flash notification error
+			history.replace('/invoices');
 		}
 	};
 
+	/**
+	 * Récupération des clients au chargement du composants
+	 */
 	useEffect(() => {
 		fetchCustomers();
 	}, []);
 
+	/**
+	 * Récupération de la bonne facture quand l'url change
+	 */
 	useEffect(() => {
 		if (id != 'new') {
 			setEditing(true);
@@ -67,24 +79,19 @@ const InvoicePage = ({ history, match }) => {
 		setInvoice({ ...invoice, [name]: value });
 	};
 
+	/**
+	 * Gestion soumission formulaire
+	 * @param {*} event 
+	 */
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
 		try {
 			if (editing) {
-				const response = await axios.put(
-					'https://127.0.0.1:8000/api/invoices/' + id,
-					{ ...invoice, customer: `/api/customers/${invoice.customer}` }
-				);
+				await InvoiceAPI.update(id, invoice);
 				//TODO Flash notification success
 			} else {
-				const response = await axios.post(
-					'https://127.0.0.1:8000/api/invoices',
-					{
-						...invoice,
-						customer: `/api/customers/${invoice.customer}`
-					}
-				);
+				await InvoiceAPI.create(invoice);
 			}
 
 			// TODO : flash Notification succcess
