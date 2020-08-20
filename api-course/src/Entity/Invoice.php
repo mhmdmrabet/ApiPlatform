@@ -48,7 +48,6 @@ class Invoice
      * @ORM\Column(type="float")
      * @Groups({"invoices_read","customers_read","invoices_subresource"})
      * @Assert\NotBlank(message="Le montant de la facture est obligatoire")
-     * @Assert\Type(type="float" , message="Le montant de la facture doit être un numérique")
      */
     private $amount;
 
@@ -99,12 +98,12 @@ class Invoice
         return $this->id;
     }
 
-    public function getAmount(): ?float
+    public function getAmount()
     {
         return $this->amount;
     }
 
-    public function setAmount(float $amount): self
+    public function setAmount( $amount): self
     {
         $this->amount = $amount;
 

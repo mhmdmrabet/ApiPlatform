@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import Field from '../components/forms/Field';
 import Select from '../components/forms/Select';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 import CustomersApi from '../services/customersAPI';
 
-const InvoicePage = (props) => {
+const InvoicePage = ({ history }) => {
 	const [invoice, setInvoice] = useState({
 		amount: '',
 		customer: '',
-		status: ''
+		status: 'SENT'
 	});
 
 	const [customers, setCustomers] = useState([]);
@@ -24,6 +25,8 @@ const InvoicePage = (props) => {
 		try {
 			const data = await CustomersApi.findAll();
 			setCustomers(data);
+
+			if (!invoice.customer) setInvoice({ ...invoice, customer: data[0].id });
 		} catch (error) {
 			console.log(error.response);
 		}
@@ -42,10 +45,33 @@ const InvoicePage = (props) => {
 		setInvoice({ ...invoice, [name]: value });
 	};
 
+	const handleSubmit = async (event) => {
+		event.preventDefault();
+
+		try {
+			const response = await axios.post('https://127.0.0.1:8000/api/invoices', {
+				...invoice,
+				customer: `/api/customers/${invoice.customer}`
+			});
+			// TODO : flash Notification succcess
+			history.replace('/invoices');
+		} catch ({ response }) {
+			const { violations } = response.data;
+			if (violations) {
+				const apiErrors = {};
+				violations.forEach(({ propertyPath, message }) => {
+					apiErrors[propertyPath] = message;
+				});
+
+				setErrors(apiErrors);
+			}
+		}
+	};
+
 	return (
 		<>
 			<h1>Création d'une facture</h1>
-			<form action="">
+			<form onSubmit={handleSubmit}>
 				<Field
 					name="amount"
 					type="number"
