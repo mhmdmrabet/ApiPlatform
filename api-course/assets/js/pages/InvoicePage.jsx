@@ -6,7 +6,9 @@ import axios from 'axios';
 
 import CustomersApi from '../services/customersAPI';
 
-const InvoicePage = ({ history }) => {
+const InvoicePage = ({ history, match }) => {
+	const { id = 'new' } = match.params;
+	const [editing, setEditing] = useState(false);
 	const [invoice, setInvoice] = useState({
 		amount: '',
 		customer: '',
@@ -32,9 +34,29 @@ const InvoicePage = ({ history }) => {
 		}
 	};
 
+	const fetchInvoice = async (id) => {
+		try {
+			const data = await axios
+				.get('https://127.0.0.1:8000/api/invoices/' + id)
+				.then((response) => response.data);
+			const { amount, status, customer } = data;
+
+			setInvoice({ amount, status, customer: customer.id });
+		} catch (error) {
+			console.log(error.response);
+		}
+	};
+
 	useEffect(() => {
 		fetchCustomers();
 	}, []);
+
+	useEffect(() => {
+		if (id != 'new') {
+			setEditing(true);
+			fetchInvoice(id);
+		}
+	}, [id]);
 
 	/**
 	 * Gestion des changements des inputs dans le form
@@ -49,10 +71,22 @@ const InvoicePage = ({ history }) => {
 		event.preventDefault();
 
 		try {
-			const response = await axios.post('https://127.0.0.1:8000/api/invoices', {
-				...invoice,
-				customer: `/api/customers/${invoice.customer}`
-			});
+			if (editing) {
+				const response = await axios.put(
+					'https://127.0.0.1:8000/api/invoices/' + id,
+					{ ...invoice, customer: `/api/customers/${invoice.customer}` }
+				);
+				//TODO Flash notification success
+			} else {
+				const response = await axios.post(
+					'https://127.0.0.1:8000/api/invoices',
+					{
+						...invoice,
+						customer: `/api/customers/${invoice.customer}`
+					}
+				);
+			}
+
 			// TODO : flash Notification succcess
 			history.replace('/invoices');
 		} catch ({ response }) {
@@ -70,7 +104,9 @@ const InvoicePage = ({ history }) => {
 
 	return (
 		<>
-			<h1>Création d'une facture</h1>
+			{(editing && <h1>Modification d'une facture</h1>) || (
+				<h1>Creation d'une facture</h1>
+			)}
 			<form onSubmit={handleSubmit}>
 				<Field
 					name="amount"

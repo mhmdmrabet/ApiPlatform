@@ -90,7 +90,9 @@ const CustomersPage = (props) => {
 		<div>
 			<div className="d-flex justify-content-between align-items-center mb-3">
 				<h1 className="text-center">Liste des clients</h1>
-				<Link to="/customers/new" className="btn btn-primary">Créer un client</Link>
+				<Link to="/customers/new" className="btn btn-primary">
+					Créer un client
+				</Link>
 			</div>
 
 			<div className="form-group">
@@ -132,6 +134,12 @@ const CustomersPage = (props) => {
 								{customer.totalAmount.toLocaleString()} €
 							</td>
 							<td>
+								<Link
+									to={'/customers/' + customer.id}
+									className="btn btn-sm btn-success m-2"
+								>
+									Editer
+								</Link>
 								<button
 									onClick={() => handleDelete(customer.id)}
 									disabled={customer.invoices.length > 0}
