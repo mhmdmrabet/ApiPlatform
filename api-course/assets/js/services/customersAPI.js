@@ -11,17 +11,17 @@ function deleteCustomer(id) {
 }
 
 function find(id) {
-	return Axios.get('https://127.0.0.1:8000/api/customers/' + id).then(
+	return axios.get('https://127.0.0.1:8000/api/customers/' + id).then(
 		(response) => response.data
 	);
 }
 
 function update(id, customer) {
-	return Axios.put('https://127.0.0.1:8000/api/customers/' + id, customer);
+	return axios.put('https://127.0.0.1:8000/api/customers/' + id, customer);
 }
 
 function create(customer) {
-	return Axios.post('https://127.0.0.1:8000/api/customers', customer);
+	return axios.post('https://127.0.0.1:8000/api/customers', customer);
 }
 
 export default {
