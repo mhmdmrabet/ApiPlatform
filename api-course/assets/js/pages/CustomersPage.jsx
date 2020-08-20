@@ -3,6 +3,7 @@ import Pagination from '../components/Pagination';
 import CustomersApi from '../services/customersAPI';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import TableLoader from '../components/loaders/TableLoader';
 
 const CustomersPage = (props) => {
 	const [customers, setCustomers] = useState([]);
@@ -10,6 +11,8 @@ const CustomersPage = (props) => {
 	const [currentPage, setCurrentPage] = useState(1);
 
 	const [search, setSearch] = useState('');
+
+	const [loading, setLoading] = useState(true);
 
 	/**
 	 * Permet d'aller récupérer les customers
@@ -19,6 +22,7 @@ const CustomersPage = (props) => {
 		try {
 			const data = await CustomersApi.findAll();
 			setCustomers(data);
+			setLoading(false);
 		} catch (e) {
 			toast.error('Impossible de charger les clients');
 		}
@@ -120,40 +124,44 @@ const CustomersPage = (props) => {
 					</tr>
 				</thead>
 
-				<tbody>
-					{paginatedCustomers.map((customer) => (
-						<tr key={customer.id}>
-							<td>{customer.id}</td>
-							<td>
-								<a href="#">
-									{customer.firstName} {customer.lastName}
-								</a>
-							</td>
-							<td>{customer.email}</td>
-							<td>{customer.company}</td>
-							<td className="text-center">{customer.invoices.length}</td>
-							<td className="text-center">
-								{customer.totalAmount.toLocaleString()} €
-							</td>
-							<td>
-								<Link
-									to={'/customers/' + customer.id}
-									className="btn btn-sm btn-success m-2"
-								>
-									Editer
-								</Link>
-								<button
-									onClick={() => handleDelete(customer.id)}
-									disabled={customer.invoices.length > 0}
-									className="btn btn-sm btn-danger"
-								>
-									Supprimer
-								</button>
-							</td>
-						</tr>
-					))}
-				</tbody>
+				{!loading && (
+					<tbody>
+						{paginatedCustomers.map((customer) => (
+							<tr key={customer.id}>
+								<td>{customer.id}</td>
+								<td>
+									<a href="#">
+										{customer.firstName} {customer.lastName}
+									</a>
+								</td>
+								<td>{customer.email}</td>
+								<td>{customer.company}</td>
+								<td className="text-center">{customer.invoices.length}</td>
+								<td className="text-center">
+									{customer.totalAmount.toLocaleString()} €
+								</td>
+								<td>
+									<Link
+										to={'/customers/' + customer.id}
+										className="btn btn-sm btn-success m-2"
+									>
+										Editer
+									</Link>
+									<button
+										onClick={() => handleDelete(customer.id)}
+										disabled={customer.invoices.length > 0}
+										className="btn btn-sm btn-danger"
+									>
+										Supprimer
+									</button>
+								</td>
+							</tr>
+						))}
+					</tbody>
+				)}
 			</table>
+
+			{loading && <TableLoader />}
 
 			{itemsPerPage < filteredCustomers.length && (
 				<Pagination
