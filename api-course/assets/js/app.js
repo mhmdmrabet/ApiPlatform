@@ -7,13 +7,7 @@
 
 import React, { useState } from 'react';
 import ReactDom from 'react-dom';
-import {
-	HashRouter,
-
-	Route, Switch,
-
-	withRouter
-} from 'react-router-dom';
+import { HashRouter, Route, Switch, withRouter } from 'react-router-dom';
 // any CSS you import will output into a single css file (app.css in this case)
 import '../css/app.css';
 import Navbar from './components/Navbar';
@@ -26,8 +20,7 @@ import LoginPage from './pages/LoginPage';
 import { default as AuthAPI, default as authAPI } from './services/authAPI';
 import CustomerPage from './pages/CustomerPage';
 import InvoicePage from './pages/InvoicePage';
-
-
+import RegisterPage from './pages/RegisterPage';
 
 // Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
 // import $ from 'jquery';
@@ -54,6 +47,7 @@ const App = () => {
 				<main className="container pt-5">
 					<Switch>
 						<Route path="/login" component={LoginPage} />
+						<Route path="/register" component={RegisterPage} />
 						<PrivateRoute path="/invoices/:id" component={InvoicePage} />
 						<PrivateRoute path="/invoices" component={InvoicesPage} />
 						<PrivateRoute path="/customers/:id" component={CustomerPage} />
