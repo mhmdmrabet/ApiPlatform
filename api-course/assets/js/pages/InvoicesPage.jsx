@@ -144,9 +144,9 @@ const InvoicesPage = (props) => {
 							<tr key={invoice.id}>
 								<td>{invoice.chrono}</td>
 								<td>
-									<a href="#">
+									<Link to={'/invoices/' + invoice.id}>
 										{invoice.customer.firstName} {invoice.customer.lastName}
-									</a>
+									</Link>
 								</td>
 								<td className="text-center">{formatDate(invoice.sentAt)}</td>
 								<td className="text-center">
